@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JdayStudy 复杂网络分析工具箱 — 零代码网络科学软件</title>
+<meta name="description" content="JdayStudy 复杂网络分析工具箱：中心性度量、脆弱性-鲁棒性分析、网络韧性、SIR 传播仿真、加边策略等 7 款零代码图形界面软件。导入 Excel 边表即可运行，产出可直接用于论文的图表与数据。">
+<meta property="og:title" content="JdayStudy 复杂网络分析工具箱">
+<meta property="og:description" content="7 款零代码网络分析软件：中心性 · 鲁棒性 · 韧性 · 传播仿真 · 网络优化">
+<style>
+:root{
+  --navy-950:#060B1A;
+  --navy-900:#0A1128;
+  --navy-800:#111C3E;
+  --navy-700:#1B2B5A;
+  --cyan:#22D3EE;
+  --cyan-deep:#0E7490;
+  --violet:#8B7CF6;
+  --ink:#101B33;
+  --ink-2:#3E4C68;
+  --ink-3:#6C7890;
+  --bg:#F4F7FB;
+  --card:#FFFFFF;
+  --line:#E2E8F2;
+  --chip-bg:#EDF3FA;
+  --chip-line:#D9E4F1;
+  --radius:16px;
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);color:var(--ink);background:#fff;line-height:1.75;font-size:16px}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+section{scroll-margin-top:72px}
+
+/* ---------- 导航 ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,11,26,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07)}
+.nav-inner{max-width:1080px;margin:0 auto;padding:0 22px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;color:#fff;font-weight:600;font-size:17px;letter-spacing:.3px}
+.brand-dot{width:26px;height:26px;flex:none}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14.5px}
+.nav-links a{color:#C3CDE4;transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--cyan);color:#06222B !important;font-weight:600;padding:7px 16px;border-radius:999px;transition:transform .15s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(34,211,238,.35)}
+.nav-toggle{display:none;background:none;border:0;width:40px;height:40px;cursor:pointer;position:relative}
+.nav-toggle span{position:absolute;left:9px;right:9px;height:2px;background:#fff;border-radius:2px;transition:.25s}
+.nav-toggle span:nth-child(1){top:13px}
+.nav-toggle span:nth-child(2){top:19px}
+.nav-toggle span:nth-child(3){top:25px}
+.nav.open .nav-toggle span:nth-child(1){top:19px;transform:rotate(45deg)}
+.nav.open .nav-toggle span:nth-child(2){opacity:0}
+.nav.open .nav-toggle span:nth-child(3){top:19px;transform:rotate(-45deg)}
+@media (max-width:820px){
+  .nav-toggle{display:block}
+  .nav-links{position:absolute;top:60px;left:0;right:0;background:#060B1A;flex-direction:column;align-items:stretch;gap:0;padding:8px 0 14px;display:none;border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 18px 34px rgba(0,0,0,.5)}
+  .nav.open .nav-links{display:flex}
+  .nav-links a{padding:12px 26px}
+  .nav-cta{margin:10px 22px 0;text-align:center}
+}
+
+/* ---------- 首屏 ---------- */
+.hero{position:relative;background:var(--navy-900);color:#fff;overflow:hidden;padding:150px 0 86px}
+#net{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-inner{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 22px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:#9BE8F7;background:rgba(34,211,238,.10);border:1px solid rgba(34,211,238,.35);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.22;font-weight:700;letter-spacing:.5px}
+.hero h1 em{font-style:normal;color:var(--cyan)}
+.hero-sub{margin-top:20px;max-width:640px;font-size:clamp(15.5px,2.2vw,18px);color:#B9C4DE;line-height:1.9}
+.hero-sub b{color:#E8EDF8;font-weight:600}
+.hero-actions{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:999px;font-size:15.5px;font-weight:600;transition:transform .15s,box-shadow .2s,background .2s}
+.btn-primary{background:var(--cyan);color:#06222B}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,211,238,.4)}
+.btn-ghost{border:1px solid rgba(255,255,255,.3);color:#E8EDF8}
+.btn-ghost:hover{border-color:rgba(255,255,255,.65);background:rgba(255,255,255,.06)}
+.hero-stats{margin-top:58px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:780px}
+.stat{border-left:2px solid rgba(34,211,238,.45);padding:2px 0 2px 16px}
+.stat b{display:block;font-size:clamp(24px,3.4vw,34px);font-weight:700;color:#fff;line-height:1.2}
+.stat b i{font-style:normal;color:var(--cyan);font-size:.62em;margin-left:2px}
+.stat span{font-size:13px;color:#8E9BBC}
+@media (max-width:640px){.hero{padding:126px 0 64px}.hero-stats{grid-template-columns:repeat(2,1fr);gap:20px 12px}}
+
+/* ---------- 通用区块 ---------- */
+.sec{padding:clamp(60px,9vw,96px) 0}
+.sec-alt{background:var(--bg)}
+.kicker{font-size:13.5px;font-weight:700;letter-spacing:3px;color:var(--cyan-deep);text-transform:uppercase}
+.sec h2{font-size:clamp(26px,4vw,36px);font-weight:700;margin-top:10px;letter-spacing:.5px}
+.lede{margin-top:14px;color:var(--ink-2);max-width:620px;font-size:16px}
+
+/* ---------- 工具总览 ---------- */
+.tools-grid{margin-top:44px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;display:flex;flex-direction:column;gap:10px;transition:transform .2s,box-shadow .25s,border-color .2s}
+.tcard:hover{transform:translateY(-4px);border-color:#B6E5F0;box-shadow:0 14px 34px rgba(16,44,84,.10)}
+.tcard .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--chip-bg)}
+.tcard .ico svg{width:24px;height:24px;stroke:var(--cyan-deep)}
+.tcard h3{font-size:16.5px;font-weight:600;line-height:1.45}
+.tcard p{font-size:13.8px;color:var(--ink-3);line-height:1.7}
+.tcard .go{margin-top:auto;font-size:13.5px;color:var(--cyan-deep);font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.tcard.doc-card{background:linear-gradient(160deg,var(--navy-800),var(--navy-900));border-color:var(--navy-700)}
+.tcard.doc-card h3,.tcard.doc-card .go{color:#fff}
+.tcard.doc-card p{color:#9DA9C8}
+.tcard.doc-card .ico{background:rgba(34,211,238,.12)}
+.tcard.doc-card .ico svg{stroke:var(--cyan)}
+
+/* ---------- 工具详情 ---------- */
+.tool{padding:clamp(56px,8vw,84px) 0;border-top:1px solid var(--line)}
+.tool:nth-of-type(even){background:var(--bg)}
+.tool-head{display:flex;align-items:flex-start;gap:18px}
+.tool-num{font-size:15px;font-weight:700;color:var(--cyan-deep);border:1.5px solid #BFE8F2;border-radius:10px;padding:4px 11px;flex:none;margin-top:4px;background:#fff}
+.tool-head h3{font-size:clamp(21px,3vw,27px);font-weight:700;line-height:1.4}
+.tool-tag{margin-top:8px;color:var(--cyan-deep);font-size:15.5px;font-weight:500}
+.tool-grid{margin-top:26px;display:grid;grid-template-columns:1.45fr 1fr;gap:30px;align-items:start}
+.tool-intro{color:var(--ink-2);font-size:15.5px}
+.feat{margin-top:18px;display:grid;gap:10px}
+.feat li{position:relative;padding-left:24px;font-size:15px;color:var(--ink);line-height:1.7}
+.feat li::before{content:"";position:absolute;left:2px;top:11px;width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.18)}
+.feat li b{font-weight:600}
+.spec{background:var(--navy-900);color:#D5DDF0;border-radius:var(--radius);padding:22px 22px 20px;font-size:14px}
+.spec h4{font-size:13px;letter-spacing:2.5px;color:#7E8BAD;font-weight:600;margin-bottom:12px}
+.spec-row{display:flex;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.09);line-height:1.65}
+.spec-row b{flex:none;color:#9BE8F7;font-weight:600;min-width:44px}
+.spec-links{margin-top:16px;display:flex;flex-direction:column;gap:9px}
+.spec-links a{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:9px 14px;border-radius:10px;font-size:13.8px;color:#fff;transition:background .2s,border-color .2s}
+.spec-links a:hover{background:rgba(34,211,238,.14);border-color:rgba(34,211,238,.5)}
+.spec-links a svg{width:14px;height:14px;stroke:#9BE8F7;flex:none}
+details.acc{margin-top:20px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.tool:nth-of-type(odd) details.acc{background:var(--bg)}
+details.acc summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:13px 18px;font-size:14.5px;font-weight:600;color:var(--ink-2);user-select:none}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary .plus{width:18px;height:18px;flex:none;position:relative;transition:transform .25s}
+details.acc summary .plus::before,details.acc summary .plus::after{content:"";position:absolute;background:var(--cyan-deep);border-radius:2px}
+details.acc summary .plus::before{left:8px;top:2px;width:2px;height:14px}
+details.acc summary .plus::after{left:2px;top:8px;width:14px;height:2px}
+details.acc[open] summary .plus{transform:rotate(45deg)}
+.acc-body{padding:4px 18px 18px}
+.acc-body h5{font-size:13.5px;color:var(--ink-3);font-weight:600;margin:12px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:var(--chip-bg);border:1px solid var(--chip-line);color:var(--ink-2);font-size:12.8px;padding:3px 11px;border-radius:999px;line-height:1.6}
+@media (max-width:860px){.tool-grid{grid-template-columns:1fr;gap:22px}}
+
+/* ---------- 应用场景 ---------- */
+.scene-grid{margin-top:40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.scene{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:flex;gap:16px;align-items:flex-start}
+.scene .ico{width:42px;height:42px;flex:none;border-radius:11px;background:var(--chip-bg);display:grid;place-items:center}
+.scene .ico svg{width:22px;height:22px;stroke:var(--cyan-deep)}
+.scene h3{font-size:16px;font-weight:600}
+.scene p{margin-top:5px;font-size:13.8px;color:var(--ink-3);line-height:1.7}
+
+/* ---------- 使用流程 ---------- */
+.flow-grid{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:step}
+.step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px}
+.step::before{counter-increment:step;content:"0" counter(step);font-size:30px;font-weight:800;color:transparent;-webkit-text-stroke:1.4px var(--cyan);display:block;letter-spacing:1px}
+.step h3{margin-top:10px;font-size:17px;font-weight:600}
+.step p{margin-top:8px;font-size:14.2px;color:var(--ink-3);line-height:1.75}
+.step code{background:var(--chip-bg);border:1px solid var(--chip-line);border-radius:6px;padding:1px 7px;font-size:12.8px;color:var(--cyan-deep);font-family:ui-monospace,Menlo,Consolas,monospace}
+@media (max-width:760px){.flow-grid{grid-template-columns:1fr}}
+
+/* ---------- 获取方式 ---------- */
+.get{background:var(--navy-900);color:#fff;position:relative;overflow:hidden}
+.get::after{content:"";position:absolute;right:-140px;top:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.16),transparent 65%)}
+.get .kicker{color:var(--cyan)}
+.get .lede{color:#B9C4DE}
+.get-grid{margin-top:40px;display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;position:relative;z-index:1}
+.get-steps{display:grid;gap:16px}
+.gstep{display:flex;gap:15px;align-items:flex-start}
+.gstep .n{flex:none;width:30px;height:30px;border-radius:50%;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.5);color:var(--cyan);font-weight:700;font-size:14.5px;display:grid;place-items:center;margin-top:2px}
+.gstep h4{font-size:16px;font-weight:600}
+.gstep p{font-size:14px;color:#9DA9C8;margin-top:3px;line-height:1.7}
+.qr-card{background:#fff;color:var(--ink);border-radius:20px;padding:28px 26px;text-align:center;max-width:320px;justify-self:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.qr-head{display:flex;align-items:center;gap:12px;text-align:left}
+.qr-avatar{width:46px;height:46px;flex:none;border-radius:50%;background:var(--navy-900);color:var(--cyan);font-weight:800;font-size:20px;display:grid;place-items:center}
+.qr-head b{font-size:17px;display:block}
+.qr-head span{font-size:12.5px;color:var(--ink-3)}
+.qr-box{margin:20px auto 0;width:200px;height:200px;border-radius:14px;overflow:hidden;background:var(--bg)}
+.qr-box img{width:100%;height:100%;object-fit:contain}
+#qrFallback{display:none;width:100%;height:100%;border:2px dashed #C6D2E2;border-radius:14px;place-items:center;padding:14px;font-size:12.5px;color:var(--ink-3);line-height:1.9}
+.qr-tip{margin-top:16px;font-size:13.2px;color:var(--ink-3)}
+@media (max-width:820px){.get-grid{grid-template-columns:1fr;gap:36px}.qr-card{justify-self:start}}
+
+/* ---------- 资源 ---------- */
+.doc-grid{margin-top:36px;display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:13px}
+.doc-link{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 20px;transition:border-color .2s,transform .15s}
+.doc-link:hover{border-color:#B6E5F0;transform:translateX(3px)}
+.doc-link .t b{display:block;font-size:14.8px;font-weight:600;line-height:1.5}
+.doc-link .t span{font-size:12.8px;color:var(--ink-3)}
+.doc-link svg{width:16px;height:16px;stroke:var(--cyan-deep);flex:none}
+
+/* ---------- 页脚 ---------- */
+footer{background:var(--navy-950);color:#7E8BAD;padding:34px 0;font-size:13.2px}
+.foot-inner{max-width:1080px;margin:0 auto;padding:0 22px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+.foot-inner b{color:#C3CDE4;font-weight:600}
+
+/* ---------- 动效 ---------- */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .65s ease,transform .65s ease}
+.reveal.on{opacity:1;transform:none}
+#toTop{position:fixed;right:20px;bottom:20px;width:44px;height:44px;border-radius:50%;background:var(--navy-900);border:1px solid rgba(255,255,255,.15);color:#fff;cursor:pointer;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .3s;z-index:90}
+#toTop.show{opacity:.92;pointer-events:auto}
+#toTop svg{width:18px;height:18px;stroke:#9BE8F7}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  #net{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 导航 -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <svg class="brand-dot" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <line x1="5" y1="19" x2="13" y2="6" stroke="#22D3EE" stroke-width="1.4"/>
+        <line x1="13" y1="6" x2="21" y2="16" stroke="#22D3EE" stroke-width="1.4"/>
+        <line x1="5" y1="19" x2="21" y2="16" stroke="#22D3EE" stroke-width="1.4"/>
+        <circle cx="5" cy="19" r="3" fill="#8B7CF6"/>
+        <circle cx="13" cy="6" r="3.4" fill="#22D3EE"/>
+        <circle cx="21" cy="16" r="3" fill="#22D3EE"/>
+      </svg>
+      JdayStudy
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="打开菜单"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#tools">工具</a>
+      <a href="#scenes">应用场景</a>
+      <a href="#flow">使用流程</a>
+      <a href="#docs">文档资源</a>
+      <a class="nav-cta" href="#get">获取软件</a>
+    </nav>
+  </div>
+</header>
+
+<!-- 首屏 -->
+<section class="hero" id="top">
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <span class="hero-badge"><i></i>面向科研工作者的网络科学工具箱</span>
+    <h1>复杂网络分析<br>不写代码，<em>算得明白</em></h1>
+    <p class="hero-sub">中心性 · 鲁棒性 · 韧性 · 传播仿真 · 网络优化 —— <b>7 款图形界面客户端</b>，导入 Excel 边表即可运行，产出可直接用于论文与报告的<b>高清图表和多工作表 Excel 数据</b>。社会网络、生态网络、贸易网络、基础设施网络，一套工具全覆盖。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#tools">浏览全部工具
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="#get">关注公众号获取</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b>7<i>款</i></b><span>零代码客户端工具</span></div>
+      <div class="stat"><b>35<i>+</i></b><span>节点级网络指标</span></div>
+      <div class="stat"><b>8<i>种</i></b><span>可勾选攻击策略</span></div>
+      <div class="stat"><b>60<i>+</i></b><span>公众号原创推文</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 工具总览 -->
+<section class="sec" id="tools">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker">TOOLBOX</span>
+      <h2>七款工具，覆盖网络分析全流程</h2>
+      <p class="lede">从算清楚"谁重要"，到测明白"多抗打"，再到推演"怎么传播、如何加固"——每款工具都是独立的图形界面客户端，点击卡片查看详情。</p>
+    </div>
+    <div class="tools-grid">
+      <a class="tcard reveal" href="#tool-centrality">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.6"/><circle cx="4.5" cy="6" r="1.8"/><circle cx="19.5" cy="6" r="1.8"/><circle cx="4.5" cy="18" r="1.8"/><circle cx="19.5" cy="18" r="1.8"/><path d="M6.1 7.1l3.8 3.2M14.1 10.3l3.8-3.2M6.1 16.9l3.8-3.2M14.1 13.7l3.8 3.2"/></svg></span>
+        <h3>中心性度量工具 3.0</h3>
+        <p>35+ 节点指标一键算齐，熵值法自动综合评分，找出网络中最重要的节点。</p>
+        <span class="go">查看详情 →</span>
+      </a>
+      <a class="tcard reveal" href="#tool-robustness">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 9.5C8 19.4 5 15.4 5 11V6z"/><path d="M9 11.5l2 2 4-4.5"/></svg></span>
+        <h3>脆弱性-鲁棒性分析</h3>
+        <p>随机与蓄意攻击模拟，8 种攻击策略勾选，9 项指标追踪网络退化全程。</p>
+        <span class="go">查看详情 →</span>
+      </a>
+      <a class="tcard reveal" href="#tool-attack">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3"/><path d="M12 1.8v3M12 19.2v3M1.8 12h3M19.2 12h3"/></svg></span>
+        <h3>指定节点蓄意攻击客户端</h3>
+        <p>按你指定的顺序移除节点，模拟断供、退出、灭绝等定制化冲击场景。</p>
+        <span class="go">查看详情 →</span>
+      </a>
+      <a class="tcard reveal" href="#tool-resilience">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12h4l2.5-7 4 14 2.5-7h6"/></svg></span>
+        <h3>网络韧性静态动态客户端</h3>
+        <p>扰动 + 恢复完整建模，韧性曲线与综合韧性值，量化"抗打击、能恢复"。</p>
+        <span class="go">查看详情 →</span>
+      </a>
+      <a class="tcard reveal" href="#tool-sir">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 4.5V2M12 22v-2.5M4.5 12H2M22 12h-2.5M6.7 6.7L5 5M19 19l-1.7-1.7M17.3 6.7L19 5M5 19l1.7-1.7"/></svg></span>
+        <h3>SIR 网络传播仿真</h3>
+        <p>疾病、谣言在真实网络上如何扩散？5 种免疫策略对比，保护谁最划算。</p>
+        <span class="go">查看详情 →</span>
+      </a>
+      <a class="tcard reveal" href="#tool-edges">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="18.5" r="2.3"/><circle cx="5.5" cy="5.5" r="2.3"/><circle cx="18.5" cy="18.5" r="2.3"/><path d="M5.5 8v8M8 18.5h8"/><path d="M15 5.5h7M18.5 2v7" stroke-dasharray="2.4 2.2"/></svg></span>
+        <h3>网络加边策略工具</h3>
+        <p>预算有限，新连线加在哪里收益最大？5 种策略自动对比出最优方案。</p>
+        <span class="go">查看详情 →</span>
+      </a>
+      <a class="tcard reveal" href="#tool-convert">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8" height="8" rx="1.5"/><rect x="13.5" y="13.5" width="8" height="8" rx="1.5"/><path d="M13.5 6.5h4a2 2 0 012 2v2M10.5 17.5h-4a2 2 0 01-2-2v-2"/></svg></span>
+        <h3>矩阵与三列式互转工具</h3>
+        <p>邻接矩阵与边表一键互转，打通 UCINET、Gephi 与本系列软件的数据格式。</p>
+        <span class="go">查看详情 →</span>
+      </a>
+      <a class="tcard doc-card reveal" href="#docs">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h9l5 5v12a1.5 1.5 0 01-1.5 1.5h-12A1.5 1.5 0 014 20.5v-15A1.5 1.5 0 015.5 3.5z"/><path d="M14 3.5v5h5M8 13h8M8 17h5"/></svg></span>
+        <h3>公式文档与操作视频</h3>
+        <p>每款软件都配有指标公式详解与视频教程，方法部分写作有据可依。</p>
+        <span class="go">查看资源 →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 工具 01 中心性 -->
+<section class="tool" id="tool-centrality">
+  <div class="wrap">
+    <div class="tool-head reveal">
+      <span class="tool-num">01</span>
+      <div>
+        <h3>复杂网络中心性度量工具 3.0</h3>
+        <p class="tool-tag">一次运行，算齐 35+ 节点指标与 20+ 网络指标，熵值法自动给出综合评分与排名</p>
+      </div>
+    </div>
+    <div class="tool-grid">
+      <div class="reveal">
+        <p class="tool-intro">导入边表，软件自动计算从度中心性到结构洞的数十种网络科学度量，支持有向 / 无向、加权 / 非加权网络，并用熵值法为各项指标客观赋权，直接输出每个节点的综合得分与排名——谁是网络里最重要的节点，一目了然。</p>
+        <ul class="feat">
+          <li><b>8 类节点重要性指标：</b>度、介数、接近、特征向量、PageRank、HITS（枢纽 / 权威）、调和、负载中心性</li>
+          <li><b>结构与社群：</b>K-核分解、聚类系数、连通分量、结构洞（约束 / 有效规模 / 效率）</li>
+          <li><b>全局画像：</b>密度、直径、平均最短路径、传递性、六种同配性、网络效率</li>
+          <li><b>韧性四维：</b>鲁棒性、冗余性、多样性、快速性</li>
+          <li><b>熵值法综合评价：</b>指标权重 → 维度权重 → 综合得分与排名，全程客观赋权，避免主观打分</li>
+        </ul>
+        <details class="acc">
+          <summary>完整指标清单（节点级 35 项）<span class="plus"></span></summary>
+          <div class="acc-body">
+            <h5>中心性指标（23 项）</h5>
+            <div class="chips"><span class="chip">加权度数</span><span class="chip">绝对度数</span><span class="chip">绝对入度</span><span class="chip">绝对出度</span><span class="chip">TDC</span><span class="chip">归一化度数</span><span class="chip">接近中心性</span><span class="chip">介数中心性</span><span class="chip">特征向量中心性</span><span class="chip">PageRank</span><span class="chip">K-Core</span><span class="chip">谐波中心性</span><span class="chip">聚类系数</span><span class="chip">负载中心性</span><span class="chip">平均邻居度</span><span class="chip">HITS 枢纽值</span><span class="chip">HITS 权威值</span><span class="chip">约束</span><span class="chip">有效规模</span><span class="chip">效率</span></div>
+            <h5>四维度指标（8 项）</h5>
+            <div class="chips"><span class="chip">度数</span><span class="chip">入度</span><span class="chip">出度</span><span class="chip">邻近平均度</span><span class="chip">入邻近平均入度</span><span class="chip">出邻近平均出度</span><span class="chip">节点平均路径长</span><span class="chip">局部聚类系数</span></div>
+            <h5>韧性指标（4 项）</h5>
+            <div class="chips"><span class="chip">鲁棒性</span><span class="chip">冗余性</span><span class="chip">多样性</span><span class="chip">快速性</span></div>
+            <h5>网络级指标（节选）</h5>
+            <div class="chips"><span class="chip">平均入度 / 出度 / 总度</span><span class="chip">六种同配性</span><span class="chip">孤立节点统计</span><span class="chip">强 / 弱连通子图</span><span class="chip">网络平均路径长</span><span class="chip">网络效率</span><span class="chip">平均聚类系数</span><span class="chip">网络密度</span><span class="chip">网络直径</span><span class="chip">传递性</span></div>
+          </div>
+        </details>
+      </div>
+      <aside class="spec reveal">
+        <h4>规格速览</h4>
+        <div class="spec-row"><b>输入</b><span>Excel / CSV 边表（source、target，可选 weight）</span></div>
+        <div class="spec-row"><b>输出</b><span>3 个 Excel 工作簿、共 16 张工作表（指标明细 / 熵值权重 / 综合得分）</span></div>
+        <div class="spec-row"><b>支持</b><span>有向 · 无向 · 加权 · 非加权</span></div>
+        <div class="spec-links">
+          <a href="https://mp.weixin.qq.com/s/AqbOCNkDWQN_k0bHKmAXXg" target="_blank" rel="noopener">阅读推文原文<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+          <a href="https://mp.weixin.qq.com/s/8F0TOCooo9HV23T8exISbg" target="_blank" rel="noopener">指标公式详细说明<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 工具 02 脆弱性-鲁棒性 -->
+<section class="tool" id="tool-robustness">
+  <div class="wrap">
+    <div class="tool-head reveal">
+      <span class="tool-num">02</span>
+      <div>
+        <h3>脆弱性-鲁棒性分析软件（随机 / 蓄意攻击）</h3>
+        <p class="tool-tag">8 种攻击策略自由勾选，9 项性能指标全程追踪，看清网络在打击下如何退化</p>
+      </div>
+    </div>
+    <div class="tool-grid">
+      <div class="reveal">
+        <p class="tool-intro">模拟节点或边被逐步移除的过程：既可以随机失效，也可以按度、介数、PageRank 等中心性"擒贼先擒王"。软件实时绘制蓄意攻击与随机攻击的对比曲线，帮你找出网络的命门与底线，理解"鲁棒但脆弱"这一复杂网络的经典悖论。</p>
+        <ul class="feat">
+          <li><b>攻击方式可勾选：</b>度数、接近中心性、介数、PageRank、聚类系数、特征向量、随机节点、边攻击、随机边</li>
+          <li><b>蓄意 vs 随机对比曲线</b>，直观展示不同策略下网络性能的坠落速度</li>
+          <li><b>附带输出</b>每个节点的中心性指标表，攻击顺序有据可查</li>
+          <li><b>三步操作：</b>选输入文件 → 选输出文件夹 → 一键运行</li>
+        </ul>
+        <details class="acc">
+          <summary>9 项追踪指标清单<span class="plus"></span></summary>
+          <div class="acc-body">
+            <div class="chips" style="margin-top:10px"><span class="chip">全局效率</span><span class="chip">平均节点度</span><span class="chip">最大连通子图占比</span><span class="chip">平均聚类系数</span><span class="chip">平均最短路径长度</span><span class="chip">结构熵</span><span class="chip">代数连通度</span><span class="chip">连通分量数量</span><span class="chip">连通鲁棒性</span></div>
+          </div>
+        </details>
+      </div>
+      <aside class="spec reveal">
+        <h4>规格速览</h4>
+        <div class="spec-row"><b>输入</b><span>Excel 边表（source、target）</span></div>
+        <div class="spec-row"><b>输出</b><span>PNG / PDF 对比曲线图 + Excel 数据报告（含每节点中心性）</span></div>
+        <div class="spec-row"><b>特色</b><span>攻击策略勾选式自由组合</span></div>
+        <div class="spec-links">
+          <a href="https://mp.weixin.qq.com/s/iXdToO9q6MHMyhF20dv1ug" target="_blank" rel="noopener">阅读推文原文<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+          <a href="https://mp.weixin.qq.com/s?__biz=MzkyMzE4NDc3Mg==&amp;mid=2247486653&amp;idx=2&amp;sn=759c73e223b694c59c1cc8bc03009c33" target="_blank" rel="noopener">指标公式文档<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+          <a href="https://mp.weixin.qq.com/s/gC9rC9D7Fhxy7vLLV9w5uQ" target="_blank" rel="noopener">操作视频<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 工具 03 指定节点攻击 -->
+<section class="tool" id="tool-attack">
+  <div class="wrap">
+    <div class="tool-head reveal">
+      <span class="tool-num">03</span>
+      <div>
+        <h3>指定节点蓄意攻击客户端</h3>
+        <p class="tool-tag">按你指定的顺序移除节点，模拟真实世界的定制化冲击</p>
+      </div>
+    </div>
+    <div class="tool-grid">
+      <div class="reveal">
+        <p class="tool-intro">与"按指标排序攻击"不同，这款客户端允许你从 Excel 读入任意节点移除顺序——模拟某个国家退出贸易网络、某条产业链断供、某个物种从生态系统消失，评估个性化冲击对整个网络结构与功能的影响。哪些节点是网络的"命门"，攻一下就知道。</p>
+        <ul class="feat">
+          <li><b>Excel 自定义移除顺序：</b>准备一列节点名单，软件按序逐个移除并记录网络变化</li>
+          <li><b>经典蓄意攻击内置：</b>按度、介数、PageRank、特征向量中心性排序攻击</li>
+          <li><b>随机攻击基线</b>自动对照，蓄意与随机两条曲线同图对比</li>
+          <li><b>8 项网络指标动态追踪</b>，实时表格与进度反馈</li>
+        </ul>
+        <details class="acc">
+          <summary>8 项追踪指标清单<span class="plus"></span></summary>
+          <div class="acc-body">
+            <div class="chips" style="margin-top:10px"><span class="chip">全局效率</span><span class="chip">平均度</span><span class="chip">最大连通子图占比</span><span class="chip">平均聚类系数</span><span class="chip">平均最短路径长度</span><span class="chip">结构熵</span><span class="chip">代数连通度</span><span class="chip">连通分量数量</span></div>
+          </div>
+        </details>
+      </div>
+      <aside class="spec reveal">
+        <h4>规格速览</h4>
+        <div class="spec-row"><b>输入</b><span>Excel 边表 + 可选节点移除顺序表（Node 列）</span></div>
+        <div class="spec-row"><b>输出</b><span>network_metrics_analysis.xlsx（三张工作表）+ 每项指标 PNG / PDF 折线图</span></div>
+        <div class="spec-row"><b>场景</b><span>供应链断供 · 地缘冲击 · 物种灭绝模拟</span></div>
+        <div class="spec-links">
+          <a href="https://mp.weixin.qq.com/s?__biz=MzkyMzE4NDc3Mg==&amp;mid=2247488024&amp;idx=1&amp;sn=532e77a50aedb102f37c36e0921d93aa" target="_blank" rel="noopener">阅读推文原文<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 工具 04 韧性 -->
+<section class="tool" id="tool-resilience">
+  <div class="wrap">
+    <div class="tool-head reveal">
+      <span class="tool-num">04</span>
+      <div>
+        <h3>网络韧性静态动态客户端</h3>
+        <p class="tool-tag">从"被打击"到"恢复"，静态 + 动态两个模块完整刻画网络韧性</p>
+      </div>
+    </div>
+    <div class="tool-grid">
+      <div class="reveal">
+        <p class="tool-intro">韧性不只是抗打击，还包括恢复力。静态模块模拟随机 / 目标扰动下的性能退化，动态模块模拟两种恢复策略下的回升过程，最终产出一个综合韧性值——让"这个网络韧性强不强"从一句定性判断，变成可量化、可比较的数字。特别适合贸易网络、产业网络等加权网络研究。</p>
+        <ul class="feat">
+          <li><b>4 种扰动策略：</b>随机节点移除 RNR、随机边移除 RER、目标节点攻击 TNA、目标边攻击 TEA</li>
+          <li><b>2 种恢复策略：</b>队列恢复 QRS（按失效顺序）、随机恢复 RRS（打乱顺序对照）</li>
+          <li><b>动态排序：</b>每步重新计算节点重要性再攻击，比一次性静态排序更贴近真实级联失效</li>
+          <li><b>韧性曲线 R(t) 与恢复曲线</b>，失效队列全程记录</li>
+          <li><b>5 项动态韧性指标：</b>恢复速率、恢复阶段韧性损失、单位时间韧性损失、恢复力、综合韧性值 CRA</li>
+        </ul>
+        <details class="acc">
+          <summary>指标与理论依据<span class="plus"></span></summary>
+          <div class="acc-body">
+            <h5>静态韧性指标</h5>
+            <div class="chips"><span class="chip">度数中心性</span><span class="chip">强度中心性（加权）</span><span class="chip">介数中心性</span><span class="chip">边权重</span><span class="chip">网络全局效率</span><span class="chip">相对网络效率</span><span class="chip">韧性曲线 R(t)</span><span class="chip">扰动强度量化</span></div>
+            <h5>动态韧性指标</h5>
+            <div class="chips"><span class="chip">恢复速率 ROC_RS</span><span class="chip">韧性损失 LONE_RS</span><span class="chip">单位时间损失 UTLONE_RS</span><span class="chip">恢复力 RC</span><span class="chip">综合韧性值 CRA</span></div>
+            <h5>理论基础</h5>
+            <div class="chips"><span class="chip">Albert et al. 2000, Nature</span><span class="chip">Cohen et al. 2000, PRL</span><span class="chip">Crucitti et al. 2004</span><span class="chip">Barrat et al. 2004, PRL</span><span class="chip">Chen et al. 2008, PRL</span></div>
+          </div>
+        </details>
+      </div>
+      <aside class="spec reveal">
+        <h4>规格速览</h4>
+        <div class="spec-row"><b>输入</b><span>边表（支持权重列，加权网络友好）</span></div>
+        <div class="spec-row"><b>输出</b><span>韧性曲线、恢复曲线、失效队列记录、综合评估报告</span></div>
+        <div class="spec-row"><b>特色</b><span>扰动与恢复全过程建模，动态重排序攻击</span></div>
+        <div class="spec-links">
+          <a href="https://mp.weixin.qq.com/s/QL6Br6QxnoEZ4ie-yr417g" target="_blank" rel="noopener">阅读推文原文（含公式详解）<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+          <a href="https://mp.weixin.qq.com/s/qcTVDbaI9JvtLExQqGxC5w" target="_blank" rel="noopener">案例：产业网络韧性分析<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 工具 05 SIR -->
+<section class="tool" id="tool-sir">
+  <div class="wrap">
+    <div class="tool-head reveal">
+      <span class="tool-num">05</span>
+      <div>
+        <h3>SIR 网络传播仿真软件</h3>
+        <p class="tool-tag">疾病、谣言、病毒式营销——谁先被感染？保护谁最划算？</p>
+      </div>
+    </div>
+    <div class="tool-grid">
+      <div class="reveal">
+        <p class="tool-intro">在真实网络结构上运行 SIR 传播模型，而不是"人人接触概率相同"的均匀混合假设。比较五种免疫策略谁更省资源，用零模型排除"网络结构碰巧如此"的偶然性，再用敏感性分析看清传播率 β 与恢复率 γ 如何左右疫情走向。从数据导入到论文级图表，一站完成。</p>
+        <ul class="feat">
+          <li><b>S → I → R 状态模拟</b>，感染过程网络快照逐步回放</li>
+          <li><b>5 种免疫策略对比：</b>随机免疫、度中心性、介数中心性、K-Shell 核心、手动指定</li>
+          <li><b>零模型对照实验</b>，分离网络结构对传播的真实作用</li>
+          <li><b>R0 基本再生数估计</b>（R0 ≈ β⟨k²⟩ / γ⟨k⟩），小世界、无标度特性自动检验</li>
+          <li><b>一维 + 二维参数敏感性分析</b>，输出热力图，参数影响一目了然</li>
+        </ul>
+        <details class="acc">
+          <summary>输出内容清单<span class="plus"></span></summary>
+          <div class="acc-body">
+            <div class="chips" style="margin-top:10px"><span class="chip">SIR 三线曲线图</span><span class="chip">免疫策略感染对比图</span><span class="chip">网络传播快照</span><span class="chip">二维参数热力图</span><span class="chip">零模型对照图</span><span class="chip">Excel 数据文件</span><span class="chip">文本分析报告</span><span class="chip">实验配置存档</span></div>
+          </div>
+        </details>
+      </div>
+      <aside class="spec reveal">
+        <h4>规格速览</h4>
+        <div class="spec-row"><b>输入</b><span>Excel / CSV 边表（source、target，可选 weight）</span></div>
+        <div class="spec-row"><b>输出</b><span>曲线图、快照、热力图、Excel 数据、文本报告</span></div>
+        <div class="spec-row"><b>场景</b><span>疫情推演 · 谣言治理 · 信息扩散 · 网络安全</span></div>
+        <div class="spec-links">
+          <a href="https://mp.weixin.qq.com/s?__biz=MzkyMzE4NDc3Mg==&amp;mid=2247487511&amp;idx=1&amp;sn=d3deb030f8dc5ccea38349574e37780d" target="_blank" rel="noopener">阅读推文原文<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 工具 06 加边 -->
+<section class="tool" id="tool-edges">
+  <div class="wrap">
+    <div class="tool-head reveal">
+      <span class="tool-num">06</span>
+      <div>
+        <h3>网络加边策略工具</h3>
+        <p class="tool-tag">预算只够修 p% 的新连线，连在哪里收益最大？</p>
+      </div>
+    </div>
+    <div class="tool-grid">
+      <div class="reveal">
+        <p class="tool-intro">换个方向思考：不是拆网络，而是加固网络。五种经典加边策略同时执行，七项指标改造前后对比，自动排序告诉你哪种方案让网络更稳、效率更高。公交加线路、机房加冗余链路、社群拉新裂变——本质上是同一个数学问题。</p>
+        <ul class="feat">
+          <li><b>5 种加边策略并行：</b>随机 RA、高度数 HDA、低度数 LDA、高介数 HBA、低介数 LBA</li>
+          <li><b>7 项指标前后对比：</b>度、介数、聚类系数、平均最短路径、全局效率、密度、连通性</li>
+          <li><b>改进程度分析 + 策略效果摘要</b>，自动推荐综合最优方案</li>
+          <li><b>实时进度条</b>，从读取文件到生成报告全程可视</li>
+        </ul>
+      </div>
+      <aside class="spec reveal">
+        <h4>规格速览</h4>
+        <div class="spec-row"><b>输入</b><span>Excel / CSV 边表（source、target，可选 weight）</span></div>
+        <div class="spec-row"><b>输出</b><span>单份 Excel 报告，7 张工作表（策略对比 / 改进分析 / 效果摘要）</span></div>
+        <div class="spec-row"><b>参数</b><span>加边比例建议 5%–20%，权重处理可开关</span></div>
+        <div class="spec-links">
+          <a href="https://mp.weixin.qq.com/s?__biz=MzkyMzE4NDc3Mg==&amp;mid=2247487096&amp;idx=1&amp;sn=99bb63cd2310f577c2d0a738ce374958" target="_blank" rel="noopener">阅读推文原文<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 工具 07 互转 -->
+<section class="tool" id="tool-convert">
+  <div class="wrap">
+    <div class="tool-head reveal">
+      <span class="tool-num">07</span>
+      <div>
+        <h3>矩阵与三列式互转工具</h3>
+        <p class="tool-tag">邻接矩阵 ↔ 边表（三列式），一键互转的数据小助手</p>
+      </div>
+    </div>
+    <div class="tool-grid">
+      <div class="reveal">
+        <p class="tool-intro">UCINET 习惯邻接矩阵，Gephi 和本系列软件吃 source-target-weight 三列边表。这个小工具帮你在两种格式之间来回转换，省去手工整理数据的时间，是整个工具箱的黏合剂。</p>
+        <ul class="feat">
+          <li><b>邻接矩阵 → 三列边表</b>，对接本系列全部分析软件</li>
+          <li><b>三列边表 → 邻接矩阵</b>，对接 UCINET 等传统软件</li>
+          <li><b>支持加权网络</b>，权重信息无损保留</li>
+        </ul>
+      </div>
+      <aside class="spec reveal">
+        <h4>规格速览</h4>
+        <div class="spec-row"><b>输入</b><span>Excel（矩阵或三列式）</span></div>
+        <div class="spec-row"><b>输出</b><span>Excel（转换后的另一种格式）</span></div>
+        <div class="spec-row"><b>定位</b><span>数据预处理 · 格式打通</span></div>
+        <div class="spec-links">
+          <a href="https://mp.weixin.qq.com/s?__biz=MzkyMzE4NDc3Mg==&amp;mid=2247486539&amp;idx=3&amp;sn=96330a9dc9af41946b31697cc7b73ab0" target="_blank" rel="noopener">阅读推文原文<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 应用场景 -->
+<section class="sec sec-alt" id="scenes">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker">SCENARIOS</span>
+      <h2>这些研究，正是它的用武之地</h2>
+      <p class="lede">社会网络、生态网络、贸易网络、基础设施网络——只要能整理成"节点和关系"，就能用这套工具分析。</p>
+    </div>
+    <div class="scene-grid">
+      <div class="scene reveal">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V6a2 2 0 012-2h13v14H6a2 2 0 00-2 2zm0 0A2 2 0 006 22h13v-4"/><path d="M9 8h7M9 11.5h5"/></svg></span>
+        <div>
+          <h3>期刊论文与学位论文</h3>
+          <p>从边表到论文级图表一步到位，每项指标配有公式说明，方法部分写作有据可依。</p>
+        </div>
+      </div>
+      <div class="scene reveal">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M8 21h8M12 17v4"/><rect x="4" y="7" width="16" height="10" rx="1.6"/><path d="M8 13l2.4-2.4 1.8 1.8L15 9.6"/></svg></span>
+        <div>
+          <h3>课题申报与研究报告</h3>
+          <p>网络韧性、风险评估类课题的实验支撑，仿真结果直接写进申报书与报告。</p>
+        </div>
+      </div>
+      <div class="scene reveal">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-9.2-9A5.2 5.2 0 0112 6.4 5.2 5.2 0 0121.2 12c-2.2 4.4-9.2 9-9.2 9z"/><path d="M7 12h3l1.5-3 2 6 1.5-3h3"/></svg></span>
+        <div>
+          <h3>公共卫生与传播治理</h3>
+          <p>疫情推演、谣言扩散模拟、免疫与干预资源分配，SIR 仿真给出量化依据。</p>
+        </div>
+      </div>
+      <div class="scene reveal">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5L12 4l9 4.5-9 4.5z"/><path d="M3 8.5V15l9 4.5 9-4.5V8.5"/><path d="M12 13v6.5"/></svg></span>
+        <div>
+          <h3>供应链与产业网络</h3>
+          <p>识别断链点与"命门"企业，模拟贸易冲击下的网络退化与恢复方案。</p>
+        </div>
+      </div>
+      <div class="scene reveal">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg></span>
+        <div>
+          <h3>基础设施与工程网络</h3>
+          <p>电网、交通、通信网络的抗毁性测试与冗余设计，加边策略辅助扩容决策。</p>
+        </div>
+      </div>
+      <div class="scene reveal">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0"/><circle cx="17.5" cy="10" r="2.4"/><path d="M15.5 20a4.6 4.6 0 016.4-3.4"/></svg></span>
+        <div>
+          <h3>社会网络与生态网络</h3>
+          <p>意见领袖识别、社群结构挖掘、关键物种保护优先级评估。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 使用流程 -->
+<section class="sec" id="flow">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker">WORKFLOW</span>
+      <h2>三步，从数据到结论</h2>
+      <p class="lede">所有工具共享同一套极简流程，不需要任何编程基础，十分钟上手。</p>
+    </div>
+    <div class="flow-grid">
+      <div class="step reveal">
+        <h3>准备边表数据</h3>
+        <p>用 Excel 或 CSV 整理你的网络：<code>source</code>、<code>target</code> 两列起步，加权网络再加一列 <code>weight</code>。矩阵数据可用互转工具一键转换。</p>
+      </div>
+      <div class="step reveal">
+        <h3>勾选并一键运行</h3>
+        <p>图形界面里选择输入文件、勾选想要的指标与策略、指定输出文件夹，点击运行——进度条实时反馈，全程无需写代码。</p>
+      </div>
+      <div class="step reveal">
+        <h3>拿到图表与报告</h3>
+        <p>高清 PNG / PDF 图表可直接插入论文，多工作表 Excel 保留全部过程数据，方便复算、检验与二次分析。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 获取方式 -->
+<section class="sec get" id="get">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker">GET STARTED</span>
+      <h2>获取软件与试用</h2>
+      <p class="lede">全部软件通过微信公众号 JdayStudy 发布与提供，教程、公式文档与更新也都在公众号推送。</p>
+    </div>
+    <div class="get-grid">
+      <div class="get-steps reveal">
+        <div class="gstep">
+          <span class="n">1</span>
+          <div>
+            <h4>关注公众号</h4>
+            <p>微信搜索「JdayStudy」，或扫描右侧二维码关注。</p>
+          </div>
+        </div>
+        <div class="gstep">
+          <span class="n">2</span>
+          <div>
+            <h4>留言你想要的工具</h4>
+            <p>在公众号后台留言工具名称（如"SIR 仿真""韧性客户端"），说明你的研究场景。</p>
+          </div>
+        </div>
+        <div class="gstep">
+          <span class="n">3</span>
+          <div>
+            <h4>获取软件与文档</h4>
+            <p>收到软件、使用说明与指标公式文档，后续版本更新持续跟进。</p>
+          </div>
+        </div>
+      </div>
+      <div class="qr-card reveal">
+        <div class="qr-head">
+          <span class="qr-avatar">J</span>
+          <div>
+            <b>JdayStudy</b>
+            <span>微信公众号 · 网络科学软件与教程</span>
+          </div>
+        </div>
+        <div class="qr-box">
+          <img src="assets/qrcode.png" alt="JdayStudy 公众号二维码" onerror="this.remove();document.getElementById('qrFallback').style.display='grid';">
+          <div id="qrFallback">公众号二维码<br>把二维码图片命名为 <b>qrcode.png</b><br>放入 assets 文件夹即可显示</div>
+        </div>
+        <p class="qr-tip">长按或扫码关注，获取软件与全部教程</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 文档资源 -->
+<section class="sec sec-alt" id="docs">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker">RESOURCES</span>
+      <h2>公式文档与教程资源</h2>
+      <p class="lede">每款软件的指标都有公开的公式说明与讲解推文——结果可解释、可复算，论文引用有底气。</p>
+    </div>
+    <div class="doc-grid">
+      <a class="doc-link reveal" href="https://mp.weixin.qq.com/s/8F0TOCooo9HV23T8exISbg" target="_blank" rel="noopener">
+        <span class="t"><b>中心性软件指标详细说明</b><span>35+ 指标的公式、含义与常见误读预警</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+      <a class="doc-link reveal" href="https://mp.weixin.qq.com/s?__biz=MzkyMzE4NDc3Mg==&amp;mid=2247486653&amp;idx=2&amp;sn=759c73e223b694c59c1cc8bc03009c33" target="_blank" rel="noopener">
+        <span class="t"><b>脆弱性分析工具指标公式</b><span>攻击模拟中 9 项指标的数学定义</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+      <a class="doc-link reveal" href="https://mp.weixin.qq.com/s/QL6Br6QxnoEZ4ie-yr417g" target="_blank" rel="noopener">
+        <span class="t"><b>网络韧性客户端公式详解</b><span>静态扰动与动态恢复的完整数学框架</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+      <a class="doc-link reveal" href="https://mp.weixin.qq.com/s/66F-mCggpO3AnLQMLjcz6w" target="_blank" rel="noopener">
+        <span class="t"><b>ERGM / TERGM / STERGM 详解</b><span>指数随机图模型系列科普</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+      <a class="doc-link reveal" href="https://mp.weixin.qq.com/s/qcTVDbaI9JvtLExQqGxC5w" target="_blank" rel="noopener">
+        <span class="t"><b>案例：产业网络韧性分析</b><span>网络稳定性分析实战推文</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+      <a class="doc-link reveal" href="https://mp.weixin.qq.com/s/gC9rC9D7Fhxy7vLLV9w5uQ" target="_blank" rel="noopener">
+        <span class="t"><b>操作视频：脆弱鲁棒性分析</b><span>脆弱鲁棒性与连通鲁棒性演示</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+      <a class="doc-link reveal" href="https://mp.weixin.qq.com/s/9IeO6Xe6S_sSRbUECJ3Epg" target="_blank" rel="noopener">
+        <span class="t"><b>JdayStudy 网络软件集合</b><span>全部工具的公众号总目录</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <span><b>JdayStudy</b> · 复杂网络分析工具箱</span>
+    <span>内容整理自微信公众号 JdayStudy 原创推文 · © <span id="year">2026</span> JdayStudy</span>
+  </div>
+</footer>
+
+<button id="toTop" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+(function(){
+  var nav = document.getElementById('nav');
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  toggle.addEventListener('click', function(){ nav.classList.toggle('open'); });
+  links.addEventListener('click', function(e){ if(e.target.tagName === 'A') nav.classList.remove('open'); });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    toTop.classList.toggle('show', window.scrollY > 700);
+  }, {passive:true});
+  toTop.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('on'); io.unobserve(en.target); }
+      });
+    }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('on'); });
+  }
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canvas = document.getElementById('net');
+  if(reduced || !canvas.getContext) return;
+
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var W, H, nodes = [], mouse = {x:null, y:null};
+  var LINK = 140;
+
+  function resize(){
+    var r = canvas.parentElement.getBoundingClientRect();
+    W = r.width; H = r.height;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var count = Math.max(24, Math.min(80, Math.floor(W * H / 16000)));
+    LINK = W < 640 ? 110 : 140;
+    nodes = [];
+    for(var i = 0; i < count; i++){
+      nodes.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - .5) * .38,
+        vy: (Math.random() - .5) * .38,
+        r: Math.random() * 1.7 + 1.1,
+        violet: Math.random() < .22
+      });
+    }
+  }
+
+  canvas.parentElement.addEventListener('mousemove', function(e){
+    var r = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+  });
+  canvas.parentElement.addEventListener('mouseleave', function(){ mouse.x = mouse.y = null; });
+
+  function frame(){
+    ctx.clearRect(0, 0, W, H);
+    var i, j, a, b, dx, dy, d;
+    for(i = 0; i < nodes.length; i++){
+      a = nodes[i];
+      a.x += a.vx; a.y += a.vy;
+      if(a.x < -20) a.x = W + 20; else if(a.x > W + 20) a.x = -20;
+      if(a.y < -20) a.y = H + 20; else if(a.y > H + 20) a.y = -20;
+    }
+    ctx.lineWidth = 1;
+    for(i = 0; i < nodes.length; i++){
+      a = nodes[i];
+      for(j = i + 1; j < nodes.length; j++){
+        b = nodes[j];
+        dx = a.x - b.x; dy = a.y - b.y;
+        d = dx * dx + dy * dy;
+        if(d < LINK * LINK){
+          var t = 1 - Math.sqrt(d) / LINK;
+          ctx.strokeStyle = 'rgba(56,189,248,' + (t * .34).toFixed(3) + ')';
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+      if(mouse.x !== null){
+        dx = a.x - mouse.x; dy = a.y - mouse.y;
+        d = dx * dx + dy * dy;
+        if(d < 32400){
+          var t2 = 1 - Math.sqrt(d) / 180;
+          ctx.strokeStyle = 'rgba(139,124,246,' + (t2 * .4).toFixed(3) + ')';
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+        }
+      }
+    }
+    for(i = 0; i < nodes.length; i++){
+      a = nodes[i];
+      ctx.fillStyle = a.violet ? 'rgba(160,146,255,.85)' : 'rgba(103,232,249,.85)';
+      ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, 6.2832); ctx.fill();
+    }
+    if(!document.hidden) requestAnimationFrame(frame);
+  }
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) requestAnimationFrame(frame); });
+
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
