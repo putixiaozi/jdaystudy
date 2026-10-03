@@ -2,3 +2,6 @@
 使用说明.md
 app/node_modules/
 app/dist/
+/.playwright-cli/
+/output/
+/交付/

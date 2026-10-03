@@ -7,6 +7,7 @@ const NAV = [
   { label: '关于', href: '#about' },
   { label: '服务', href: '#services' },
   { label: '工具', href: '#tools' },
+  { label: '牛牛游戏', href: './games/' },
   { label: '联系', href: '#contact' },
 ];
 
