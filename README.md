@@ -11,6 +11,13 @@
 
 内容整理自微信公众号 JdayStudy 原创推文。
 
+## 知行课堂静态展示
+
+- 官网导航中的“知行课堂”进入 `https://jdaystudy.day/classroom/`，提供书本与论文研读功能介绍。
+- 点击“后端运行环境”、上传、视频和 PPT 生成功能时显示“联系 JdayStudy”及官网公众号二维码。静态页面不上传文件、不连接模型。
+- 发布文件位于 `app/public/classroom/`，来自独立知行课堂项目的 `npm run build:static`；不包含本机 `.env`、用户文件或已有成果。
+- 原网站及游戏发布方式不变。
+
 ## 牛牛游戏
 
 - 官网导航中的“牛牛游戏”进入 `https://jdaystudy.day/games/`。
